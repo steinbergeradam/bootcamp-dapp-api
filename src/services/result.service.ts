@@ -14,4 +14,22 @@ export class ResultService extends BaseService implements IResultService {
     console.log(`The Winner Proposal is ${winningProposal}: ${winningProposalName}`);
     return winningProposalName;
   }
+
+  async getTransactionStatus(hash: string): Promise<string> {
+    const tx = await this.generateProvider().getTransaction(hash);
+    const txRecipt = await tx.wait();
+    return txRecipt.status == 1 ? "Completed" : "Reverted";
+  }
+
+  getProviderNetwork(): string {
+    return this.configService.get<string>('PROVIDER_NETWORK');
+  }
+
+  getTokenContractAddress(): string {
+    return this.configService.get<string>('TOKEN_CONTRACT_ADDRESS');
+  }
+  
+  getBallotContractAddress(): string {
+    return this.configService.get<string>('BALLOT_CONTRACT_ADDRESS');
+  }
 }

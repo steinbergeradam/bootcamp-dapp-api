@@ -6,7 +6,7 @@ import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class BaseService {
-    constructor(private configService: ConfigService) {}
+    constructor(protected configService: ConfigService) {}
 
     protected generateProvider(): ethers.providers.AlchemyProvider {
         return new ethers.providers.AlchemyProvider(

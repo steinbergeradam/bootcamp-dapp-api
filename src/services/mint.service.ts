@@ -22,4 +22,17 @@ export class MintService extends BaseService implements IMintService {
     console.log(`${ethers.utils.formatEther(tokenBalance)} tokens minted for account: (${minter.accountAddress}) at block ${mintTxReceipt.blockNumber}`);
     return ethers.utils.formatEther(tokenBalance);
   }
+
+  async getTotalSupply(): Promise<number> {
+    // connect to the token contract
+    const tokenContract = this.buildTokenContract();
+
+    // get total supply
+    const totalSupplyBN = await tokenContract.totalSupply();
+    const totalSupplyString = ethers.utils.formatEther(totalSupplyBN);
+
+    // convert total supply and return
+    const totalSupplyNumber = Math.round(parseFloat(totalSupplyString) * (10 ** 18));
+    return totalSupplyNumber;
+  }
 }

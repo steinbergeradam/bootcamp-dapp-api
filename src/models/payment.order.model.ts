@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class Vote {
+export class PaymentOrder {
     @ApiProperty()
-    voterPrivateKey: string;
+    id: number;
     @ApiProperty()
-    proposalNumber: number;
+    secret: string;
     @ApiProperty()
-    numberOfVotes: number;
+    value: number;
 }

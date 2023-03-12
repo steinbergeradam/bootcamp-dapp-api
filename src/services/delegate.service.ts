@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import { Delegation } from "../models/delegation.model";
 import { BaseService } from "./abstract/base.service";
 import { IDelegateService } from './interfaces/delegate.service.interface';
@@ -22,5 +23,17 @@ export class DelegateService extends BaseService implements IDelegateService {
     const delegates = await tokenContract.delegates(delegatorWallet.address);
     console.log(`Delegates: ${delegates}`);
     return delegates;
+  }
+
+  async getAllowance(from: string, to: string): Promise<number> {
+    // connect to the token contract
+    const tokenContract = this.buildTokenContract();
+    
+    // get allowance
+    const allowanceBN = await tokenContract.allowance(from, to);
+    const allowanceString = ethers.utils.formatEther(allowanceBN);
+    const allowanceNumber = parseFloat(allowanceString);
+    console.log(`Allowance: ${allowanceNumber}`);
+    return allowanceNumber;
   }
 }
