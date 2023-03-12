@@ -1,5 +1,4 @@
 import { Controller, Get } from '@nestjs/common';
-import { BigNumber } from 'ethers';
 import { ResultService } from '../services/result.service';
 import { IResultController } from './interfaces/result.controller.interface';
 

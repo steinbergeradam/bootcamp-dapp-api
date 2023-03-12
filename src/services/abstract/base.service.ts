@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import * as tokenJson from "../../assets/MyToken.json";
 import * as ballotJson from "../../assets/Ballot.json";
 import { Injectable } from "@nestjs/common";
@@ -8,8 +8,15 @@ import { ConfigService } from "@nestjs/config";
 export class BaseService {
     constructor(private configService: ConfigService) {}
 
+    protected generateProvider(): ethers.providers.AlchemyProvider {
+        return new ethers.providers.AlchemyProvider(
+            this.configService.get<string>('PROVIDER_NETWORK'),
+            this.configService.get<string>('ALCHEMY_API_KEY')
+        );
+    }
+
     protected connectToWallet(privateKey: string): ethers.Wallet {
-        const provider = ethers.getDefaultProvider('goerli');
+        const provider = this.generateProvider();
         const wallet = new ethers.Wallet(privateKey, provider);
         return wallet.connect(provider);
     }
