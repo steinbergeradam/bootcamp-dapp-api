@@ -4,6 +4,7 @@ import { RouterModule } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DelegateModule } from './modules/delegate.module';
+import { DeployModule } from './modules/deploy.module';
 import { MintModule } from './modules/mint.module';
 import { PaymentOrderModule } from './modules/payment.order.module';
 import { ResultModule } from './modules/result.module';
@@ -16,6 +17,7 @@ import { VoteModule } from './modules/vote.module';
     VoteModule,
     ResultModule,
     PaymentOrderModule,
+    DeployModule,
     RouterModule.register([
       {
         path: 'delegate',
@@ -36,6 +38,10 @@ import { VoteModule } from './modules/vote.module';
       {
         path: 'payment-order',
         module: PaymentOrderModule
+      },
+      {
+        path: 'deploy',
+        module: DeployModule
       },
     ]),
     ConfigModule.forRoot()
