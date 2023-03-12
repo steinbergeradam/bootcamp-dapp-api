@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import { Vote } from '../models/vote.model';
 import { VoteService } from '../services/vote.service';
@@ -12,5 +12,10 @@ export class VoteController implements IVoteController {
   @ApiBody({ type: Vote })
   async castVote(@Body() body: Vote): Promise<string> {
     return await this.voteService.castVote(body);
+  }
+
+  @Get('voting-power/:address')
+  async getVotingPower(@Param('address') address: string): Promise<number> {
+    return await this.voteService.getVotingPower(address);
   }
 }

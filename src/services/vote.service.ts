@@ -32,4 +32,14 @@ export class VoteService extends BaseService implements IVoteService {
     );
     return ethers.utils.formatEther(votingPowerSpent);
   }
+
+  async getVotingPower(address: string): Promise<number> {
+    // connect to ballot contract
+    const ballotContract = this.buildBallotContract();
+
+    // get voting power
+    const votingPower = await ballotContract.votingPower(address);
+    console.log(`Voting power for ${address} is ${votingPower}`);
+    return votingPower;
+  }
 }
