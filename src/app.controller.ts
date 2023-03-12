@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { ApiBody } from '@nestjs/swagger';
 import { AppService } from './app.service';
+import { Mint } from './models/mint.model';
 
 @Controller()
 export class AppController {
@@ -29,7 +31,8 @@ export class AppController {
   }
 
   @Post("mint-tokens")
-  mintTokens(@Query('address') address: string, @Query('tokens') tokens: number): Promise<string> {
-    return this.appService.mintTokens(address, tokens);
+  @ApiBody({ type: Mint })
+  mintTokens(@Body('mint') mint: Mint): Promise<string> {
+    return this.appService.mintTokens(mint.address, mint.tokens);
   }
 }
