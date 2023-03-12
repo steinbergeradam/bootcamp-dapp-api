@@ -32,7 +32,7 @@ export class MintService extends BaseService implements IMintService {
     const totalSupplyString = ethers.utils.formatEther(totalSupplyBN);
 
     // convert total supply and return
-    const totalSupplyNumber = Math.round(parseFloat(totalSupplyString) * (10 ** 18));
+    const totalSupplyNumber = parseFloat(totalSupplyString);
     return totalSupplyNumber;
   }
 }
