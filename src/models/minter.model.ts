@@ -1,14 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BigNumber } from "ethers";
 
 export class Minter {
     @ApiProperty()
     accountAddress: string;
     
     @ApiProperty()
-    numberOfTokens: BigNumber;
+    numberOfTokens: number;
 
-    constructor(accountAddress: string, numberOfTokens: BigNumber) {
+    constructor(accountAddress: string, numberOfTokens: number) {
         this.accountAddress = accountAddress;
         this.numberOfTokens = numberOfTokens;
     }

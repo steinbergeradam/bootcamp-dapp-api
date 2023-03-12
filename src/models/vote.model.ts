@@ -1,17 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BigNumber } from "ethers";
 
 export class Vote {
     @ApiProperty()
     voterPrivateKey: string;
 
     @ApiProperty()
-    proposalNumber: BigNumber;
+    proposalNumber: number;
 
     @ApiProperty()
-    numberOfVotes: BigNumber;
+    numberOfVotes: number;
 
-    constructor(voterPrivateKey: string, proposalNumber: BigNumber, numberOfVotes: BigNumber) {
+    constructor(voterPrivateKey: string, proposalNumber: number, numberOfVotes: number) {
         this.voterPrivateKey = voterPrivateKey;
         this.proposalNumber = proposalNumber;
         this.numberOfVotes = numberOfVotes;

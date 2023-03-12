@@ -11,6 +11,9 @@ export class DelegateService extends BaseService implements IDelegateService {
     const delegatorWallet = this.connectToWallet(delegation.senderPrivateKey);
     console.log(`Got delegator ${delegatorWallet.address}`);
 
+    // connect voter to token contract
+    tokenContract.connect(delegatorWallet);
+
     // delegate the vote
     const delegateTx = await tokenContract.delegate(delegation.recipientAddress);
     await delegateTx.wait();
