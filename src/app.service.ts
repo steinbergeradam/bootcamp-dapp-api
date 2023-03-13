@@ -32,7 +32,7 @@ export class AppService {
         return {status: status};
     }
 
-    async mintTokens(address: string, tokens: number): Promise<{balance: string}> {
+    async requestTokens(address: string, amount: number): Promise<{balance: string}> {
         // connect to the token contract
         const contract = this.buildContract();
     
@@ -40,7 +40,7 @@ export class AppService {
         const mintTx = await contract.mint(
             address,
             BigNumber.from(
-                ethers.utils.parseUnits(tokens.toString(), 18)
+                ethers.utils.parseUnits(amount.toString(), 18)
             )
         );
         const mintTxReceipt = await mintTx.wait();

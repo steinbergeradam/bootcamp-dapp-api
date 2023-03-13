@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import { AppService } from './app.service';
-import { Mint } from './models/mint.model';
+import { TokenRequest } from './models/token.request.model';
 
 @Controller()
 export class AppController {
@@ -22,10 +22,10 @@ export class AppController {
     return await this.appService.getTransactionStatus(hash);
   }
 
-  @Post("mint-tokens")
-  @ApiBody({ type: Mint })
-  async mintTokens(@Body() mint: Mint): Promise<{balance: string}> {
-    return await this.appService.mintTokens(mint.address, mint.tokens);
+  @Post("request-tokens")
+  @ApiBody({ type: TokenRequest })
+  async requestTokens(@Body() tokenRequest: TokenRequest): Promise<{balance: string}> {
+    return await this.appService.requestTokens(tokenRequest.address, tokenRequest.amount);
   }
 
   @Post("deploy-ballot")

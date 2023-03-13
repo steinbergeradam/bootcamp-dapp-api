@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class Mint {
+export class TokenRequest {
     @ApiProperty()
     address: string;
     @ApiProperty()
-    tokens: number;
+    amount: number;
 }
