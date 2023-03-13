@@ -12,6 +12,10 @@ export class AppService {
         return this.configService.get<string>('CONTRACT_ADDRESS');
     }
 
+    getBallotAddress(): string {
+        return this.configService.get<string>('BALLOT_ADDRESS');
+    }
+
     async getTotalSupply(): Promise<{total: number}> {
         // connect to the token contract
         const contract = this.buildContract();
@@ -83,6 +87,18 @@ export class AppService {
         return deployment;
     }
 
+    async getWinningProposal(): Promise<{winner: string}> {
+        // connect to ballot contract
+        const ballotContract = this.buildBallot();
+    
+        // get winning proposal
+        const winningProposal = await ballotContract.winningProposal();
+        const winningProposalNameBytes = await ballotContract.winnerName();
+        const winningProposalName = ethers.utils.parseBytes32String(winningProposalNameBytes);
+        console.log(`The Winner Proporsal is ${winningProposal}: ${winningProposalName}`);
+        return {winner: winningProposalName};
+      }
+
     private generateProvider(): ethers.providers.AlchemyProvider {
         return new ethers.providers.AlchemyProvider(
             this.configService.get<string>('PROVIDER_NETWORK'),
@@ -105,6 +121,18 @@ export class AppService {
             signer
         );
         console.log(`Connect to contract ${contract.address}`);
+        return contract;
+    }
+
+    private buildBallot(): ethers.Contract {
+        const privateKey = this.configService.get<string>('CONTRACT_PRIVATE_KEY');
+        const signer = this.connectToWallet(privateKey);
+        const contract = new ethers.Contract(
+            this.configService.get<string>('BALLOT_ADDRESS'),
+            ballotJson.abi,
+            signer
+        );
+        console.log(`Connect to ballot ${contract.address}`);
         return contract;
     }
 

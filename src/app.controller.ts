@@ -12,6 +12,11 @@ export class AppController {
     return {address: this.appService.getContractAddress()};
   }
 
+  @Get("ballot-address")
+  getBallotAddress(): {address: string} {
+    return {address: this.appService.getBallotAddress()};
+  }
+
   @Get("total-supply")
   async getTotalSupply(): Promise<{total: number}> {
     return await this.appService.getTotalSupply();
@@ -31,5 +36,10 @@ export class AppController {
   @Post("deploy-ballot")
   async deployBallot(@Body() proposals: string[]): Promise<{address: string, blockNumber: number}> {
     return await this.appService.deployBallot(proposals);
+  }
+
+  @Get("winning-proposal")
+  async getWinningProposal(): Promise<{winner: string}> {
+    return await this.appService.getWinningProposal();
   }
 }
