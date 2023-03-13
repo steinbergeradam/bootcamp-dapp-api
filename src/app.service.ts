@@ -32,7 +32,7 @@ export class AppService {
         return {status: status};
     }
 
-    async requestTokens(address: string, amount: number): Promise<{balance: string}> {
+    async requestTokens(address: string, amount: number): Promise<{result: string}> {
         // connect to the token contract
         const contract = this.buildContract();
     
@@ -44,12 +44,8 @@ export class AppService {
             )
         );
         const mintTxReceipt = await mintTx.wait();
-        
-        // get token balance
-        const tokenBalance = await contract.balanceOf(address);
-        const formattedTokenBalance = ethers.utils.formatEther(tokenBalance);
-        console.log(`${formattedTokenBalance} tokens minted for account: (${address}) at block ${mintTxReceipt.blockNumber}`);
-        return {balance: formattedTokenBalance};
+        console.log(`Transcation receipt: ${mintTxReceipt.hash}`);
+        return {result: mintTxReceipt.hash};
     }
 
     async deployBallot(proposals: string[]): Promise<{address: string, blockNumber: number}> {
