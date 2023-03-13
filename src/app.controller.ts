@@ -24,7 +24,7 @@ export class AppController {
 
   @Post("request-tokens")
   @ApiBody({ type: TokenRequest })
-  async requestTokens(@Body() tokenRequest: TokenRequest): Promise<{result: string}> {
+  async requestTokens(@Body() tokenRequest: TokenRequest): Promise<{balance: string}> {
     return await this.appService.requestTokens(tokenRequest.address, tokenRequest.amount);
   }
 
