@@ -13,26 +13,23 @@ export class AppController {
   }
 
   @Get("total-supply")
-  async getTotalSupply(): Promise<number> {
+  async getTotalSupply(): Promise<{total: number}> {
     return await this.appService.getTotalSupply();
   }
 
-  @Get("allowance")
-  async getAllowance(
-    @Query('from') from: string,
-    @Query('to') to: string
-  ): Promise<number> {
-    return await this.appService.getAllowance(from, to);
-  }
-
   @Get("transaction-status")
-  async getTransactionStatus(@Query('hash') hash: string): Promise<string> {
+  async getTransactionStatus(@Query('hash') hash: string): Promise<{status: string}> {
     return await this.appService.getTransactionStatus(hash);
   }
 
   @Post("mint-tokens")
   @ApiBody({ type: Mint })
-  mintTokens(@Body() mint: Mint): Promise<string> {
-    return this.appService.mintTokens(mint.address, mint.tokens);
+  async mintTokens(@Body() mint: Mint): Promise<{balance: string}> {
+    return await this.appService.mintTokens(mint.address, mint.tokens);
+  }
+
+  @Post("deploy-ballot")
+  async deployBallot(@Body() proposals: string[]): Promise<{address: string, blockNumber: number}> {
+    return await this.appService.deployBallot(proposals);
   }
 }

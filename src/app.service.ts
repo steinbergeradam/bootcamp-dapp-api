@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, ContractFactory, ethers } from 'ethers';
 import * as tokenJson from "./assets/MyToken.json";
+import * as ballotJson from "./assets/Ballot.json";
 
 @Injectable()
 export class AppService {
@@ -11,7 +12,7 @@ export class AppService {
         return this.configService.get<string>('CONTRACT_ADDRESS');
     }
 
-    async getTotalSupply(): Promise<number> {
+    async getTotalSupply(): Promise<{total: number}> {
         // connect to the token contract
         const contract = this.buildContract();
     
@@ -21,28 +22,17 @@ export class AppService {
     
         // convert total supply and return
         const totalSupplyNumber = parseFloat(totalSupplyString);
-        return totalSupplyNumber;
+        return {total: totalSupplyNumber};
     }
 
-    async getAllowance(from: string, to: string): Promise<number> {
-        // connect to the token contract
-        const contract = this.buildContract();
-        
-        // get allowance
-        const allowanceBN = await contract.allowance(from, to);
-        const allowanceString = ethers.utils.formatEther(allowanceBN);
-        const allowanceNumber = parseFloat(allowanceString);
-        console.log(`Allowance: ${allowanceNumber}`);
-        return allowanceNumber;
-      }
-
-    async getTransactionStatus(hash: string): Promise<string> {
+    async getTransactionStatus(hash: string): Promise<{status: string}> {
         const tx = await this.generateProvider().getTransaction(hash);
         const txRecipt = await tx.wait();
-        return txRecipt.status == 1 ? "Completed" : "Reverted";
+        const status = txRecipt.status == 1 ? "Completed" : "Reverted";
+        return {status: status};
     }
 
-    async mintTokens(address: string, tokens: number): Promise<string> {
+    async mintTokens(address: string, tokens: number): Promise<{balance: string}> {
         // connect to the token contract
         const contract = this.buildContract();
     
@@ -59,8 +49,39 @@ export class AppService {
         const tokenBalance = await contract.balanceOf(address);
         const formattedTokenBalance = ethers.utils.formatEther(tokenBalance);
         console.log(`${formattedTokenBalance} tokens minted for account: (${address}) at block ${mintTxReceipt.blockNumber}`);
-        return formattedTokenBalance;
-      }
+        return {balance: formattedTokenBalance};
+    }
+
+    async deployBallot(proposals: string[]): Promise<{address: string, blockNumber: number}> {
+        // generate inputs for ballot contract
+        const proposalsByte32String = this.convertStringArrayToBytes32(proposals);
+        const tokenContractAddress = this.configService.get<string>('CONTRACT_ADDRESS');
+    
+        // deploy ballot contract
+        const ballotContractOwnerPrivateKey = this.configService.get<string>('CONTRACT_PRIVATE_KEY');
+        const ballotContractOwnerWallet = this.connectToWallet(ballotContractOwnerPrivateKey);
+        const ballotContractFactory = new ContractFactory(
+            ballotJson.abi,
+            ballotJson.bytecode,
+            ballotContractOwnerWallet
+        );
+        const latestBlock = await this.generateProvider().getBlock("latest");
+        const ballotContract = await ballotContractFactory.deploy(
+            proposalsByte32String,
+            tokenContractAddress,
+            latestBlock.number
+        );
+        await ballotContract.deployTransaction.wait();
+        const ballotContractAddress = ballotContract.address;
+        console.log(`Deployed ballot contract at address ${ballotContract.address}`);
+    
+        // return contract addresses
+        const deployment = {
+            address: ballotContractAddress,
+            blockNumber: latestBlock.number
+        };
+        return deployment;
+    }
 
     private generateProvider(): ethers.providers.AlchemyProvider {
         return new ethers.providers.AlchemyProvider(
@@ -85,5 +106,9 @@ export class AppService {
         );
         console.log(`Connect to contract ${contract.address}`);
         return contract;
+    }
+
+    private convertStringArrayToBytes32(array: string[]) {
+        return array.map((element, index) => { return ethers.utils.formatBytes32String(element) });
     }
 }
