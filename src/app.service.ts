@@ -12,10 +12,6 @@ export class AppService {
         return this.configService.get<string>('CONTRACT_ADDRESS');
     }
 
-    getBallotAddress(): string {
-        return this.configService.get<string>('BALLOT_ADDRESS');
-    }
-
     async getTotalSupply(): Promise<{total: number}> {
         // connect to the token contract
         const contract = this.buildContract();
@@ -137,6 +133,10 @@ export class AppService {
     }
 
     private convertStringArrayToBytes32(array: string[]) {
-        return array.map((element, index) => { return ethers.utils.formatBytes32String(element) });
+        const bytes32Array = [];
+        for (let index = 0; index < array.length; index++) {
+          bytes32Array.push(ethers.utils.formatBytes32String(array[index]));
+        }
+        return bytes32Array;
     }
 }

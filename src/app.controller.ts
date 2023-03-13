@@ -12,11 +12,6 @@ export class AppController {
     return {address: this.appService.getContractAddress()};
   }
 
-  @Get("ballot-address")
-  getBallotAddress(): {address: string} {
-    return {address: this.appService.getBallotAddress()};
-  }
-
   @Get("total-supply")
   async getTotalSupply(): Promise<{total: number}> {
     return await this.appService.getTotalSupply();
