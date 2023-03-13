@@ -32,4 +32,9 @@ export class AppController {
   async deployBallot(@Body() proposals: string[]): Promise<{address: string, blockNumber: number}> {
     return await this.appService.deployBallot(proposals);
   }
+
+  @Get("winning-proposal")
+  async getWinningProposal(): Promise<{winner: string}> {
+    return await this.appService.getWinningProposal();
+  }
 }

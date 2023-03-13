@@ -83,6 +83,18 @@ export class AppService {
         return deployment;
     }
 
+    async getWinningProposal(): Promise<{winner: string}> {
+        // connect to ballot contract
+        const ballotContract = this.buildBallot();
+    
+        // get winning proposal
+        const winningProposal = await ballotContract.winningProposal();
+        const winningProposalNameBytes = await ballotContract.winnerName();
+        const winningProposalName = ethers.utils.parseBytes32String(winningProposalNameBytes);
+        console.log(`The Winner Proporsal is ${winningProposal}: ${winningProposalName}`);
+        return {winner: winningProposalName};
+      }
+
     private generateProvider(): ethers.providers.AlchemyProvider {
         return new ethers.providers.AlchemyProvider(
             this.configService.get<string>('PROVIDER_NETWORK'),
@@ -108,7 +120,23 @@ export class AppService {
         return contract;
     }
 
+    private buildBallot(): ethers.Contract {
+        const privateKey = this.configService.get<string>('CONTRACT_PRIVATE_KEY');
+        const signer = this.connectToWallet(privateKey);
+        const contract = new ethers.Contract(
+            this.configService.get<string>('BALLOT_ADDRESS'),
+            ballotJson.abi,
+            signer
+        );
+        console.log(`Connect to ballot ${contract.address}`);
+        return contract;
+    }
+
     private convertStringArrayToBytes32(array: string[]) {
-        return array.map((element, index) => { return ethers.utils.formatBytes32String(element) });
+        const bytes32Array = [];
+        for (let index = 0; index < array.length; index++) {
+          bytes32Array.push(ethers.utils.formatBytes32String(array[index]));
+        }
+        return bytes32Array;
     }
 }
