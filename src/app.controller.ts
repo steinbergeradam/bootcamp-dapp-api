@@ -32,7 +32,7 @@ export class AppController {
 
   @Post("mint-tokens")
   @ApiBody({ type: Mint })
-  mintTokens(@Body('mint') mint: Mint): Promise<string> {
+  mintTokens(@Body() mint: Mint): Promise<string> {
     return this.appService.mintTokens(mint.address, mint.tokens);
   }
 }
